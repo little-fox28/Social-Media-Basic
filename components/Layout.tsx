@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+
+import FollowBar from './layout/FollowBar';
 import Sidebar from './layout/Sidebar';
 
 interface LayoutProps {
@@ -6,18 +8,15 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const [theme, setTheme] = useState(false);
-
-  const isTheme = () => {};
-
   return (
-    <div className="h-screen bg-black">
-      <div className="container h-full mx-auto xl:px-30 max-w-6xl">
+    <div className="h-screen bg-slate-900">
+      <div className="container h-full mx-auto xl:px-30 max-w-10xl">
         <div className="grid grid-cols-4 h-full">
           <Sidebar />
           <div className="col-span-3 lg:col-span-2 border-x-[1px] border-neutral-800">
             {children}
           </div>
+          <FollowBar />
         </div>
       </div>
     </div>
