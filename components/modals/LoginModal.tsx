@@ -1,6 +1,10 @@
+import { signIn } from 'next-auth/react';
 import { useCallback, useState } from 'react';
-import useLoginModal from '../hooks/useLoginModal';
-import useRegisterModal from '../hooks/useRegisterModal';
+import { toast } from 'react-hot-toast';
+
+import useLoginModal from '../../components/hooks/useLoginModal';
+import useRegisterModal from '../../components/hooks/useRegisterModal';
+
 import Input from '../Input';
 import Modal from '../Modal';
 
@@ -12,26 +16,29 @@ const LoginModal = () => {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const onToggle = useCallback(() => {
-    if (isLoading) {
-      return;
-    }
-    loginModal.onClose();
-    registerModal.onOpen();
-  }, [isLoading, loginModal, registerModal]);
-
   const onSubmit = useCallback(async () => {
     try {
       setIsLoading(true);
 
+      await signIn('credentials', {
+        email,
+        password,
+      });
+
+      toast.success('Logged in');
+
       loginModal.onClose();
     } catch (error) {
-      console.log(error);
+      toast.error('Something went wrong');
     } finally {
-      // run regardless of the result
       setIsLoading(false);
     }
-  }, [loginModal]);
+  }, [email, password, loginModal]);
+
+  const onToggle = useCallback(() => {
+    loginModal.onClose();
+    registerModal.onOpen();
+  }, [loginModal, registerModal]);
 
   const bodyContent = (
     <div className="flex flex-col gap-4">
@@ -43,6 +50,7 @@ const LoginModal = () => {
       />
       <Input
         placeholder="Password"
+        type="password"
         onChange={(e) => setPassword(e.target.value)}
         value={password}
         disabled={isLoading}
@@ -53,17 +61,17 @@ const LoginModal = () => {
   const footerContent = (
     <div className="text-neutral-400 text-center mt-4">
       <p>
-        Do not have an account?
+        First time using Twitter?
         <span
           onClick={onToggle}
           className="
             text-white 
             cursor-pointer 
-            hover:text-sky-400
+            hover:underline
           "
         >
           {' '}
-          Register an account{' '}
+          Create an account
         </span>
       </p>
     </div>
@@ -75,11 +83,12 @@ const LoginModal = () => {
       isOpen={loginModal.isOpen}
       title="Login"
       actionLabel="Sign in"
-      onClose={onSubmit}
-      body={bodyContent}
+      onClose={loginModal.onClose}
       onSubmit={onSubmit}
+      body={bodyContent}
       footer={footerContent}
     />
   );
 };
+
 export default LoginModal;

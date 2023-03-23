@@ -1,11 +1,16 @@
 import React from 'react';
+import { useRouter } from 'next/router';
+import { useCallback } from 'react';
 import { IconType } from 'react-icons';
+import useCurrentUser from '../hooks/useCurrentUser';
+import useLoginModal from '../hooks/useLoginModal';
 
 interface SidebarItemProps {
   label: string;
   href?: string;
   icon: IconType;
   onClick?: () => void;
+  auth?: boolean;
 }
 
 const SidebarItem: React.FC<SidebarItemProps> = ({
@@ -13,9 +18,24 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   href,
   icon: Icon,
   onClick,
+  auth,
 }) => {
+  const { data: currenUser } = useCurrentUser();
+  const loginModal = useLoginModal();
+
+  const router = useRouter();
+  const handleClick = useCallback(() => {
+    if (onClick) onClick();
+
+    if (auth && !currenUser) {
+      loginModal.onOpen();
+    } else if (href) {
+      router.push(href);
+    }
+  }, [router, onClick, href, currenUser, auth, loginModal]);
+
   return (
-    <div className="flex flex-row items-center">
+    <div className="flex flex-row items-center" onClick={handleClick}>
       <div
         className="
               rounded-full
