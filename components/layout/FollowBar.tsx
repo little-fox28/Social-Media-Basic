@@ -4,7 +4,6 @@ import useUSers from '../hooks/useUsers';
 
 export default function FollowBar() {
   const { data: users = [] } = useUSers();
-  console.log('[FollowBar]', users);
 
   if (users.length === 0) {
     return null;
