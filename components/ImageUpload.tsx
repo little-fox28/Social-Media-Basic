@@ -60,7 +60,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         <div className="flex items-center justify-center ">
           <img
             src={base64}
-            className="w-50 h-50 rounded-full"
+            className="w-40 h-40 rounded-full"
             alt="Uploaded Image"
           />
         </div>
