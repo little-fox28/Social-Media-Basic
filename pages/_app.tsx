@@ -10,8 +10,11 @@ import { Toaster } from 'react-hot-toast';
 import EditModal from '@/components/modals/EditModal';
 
 export default function App({ Component, pageProps }: AppProps) {
+  const title = 'Twitter';
+
   return (
     <SessionProvider session={pageProps.session}>
+      <title>{title}</title>
       <Toaster />
       <EditModal />
       <RegisterModal />
