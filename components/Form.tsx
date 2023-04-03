@@ -1,12 +1,14 @@
-import axios from 'axios';
-import { useCallback, useState } from 'react';
-import { toast } from 'react-hot-toast';
-import Avatar from './Avatar';
-import Button from './Button';
-import useCurrentUser from './hooks/useCurrentUser';
-import useLoginModal from './hooks/useLoginModal';
-import usePosts from './hooks/usePosts';
-import useRegisterModal from './hooks/useRegisterModal';
+import axios from "axios";
+import { useCallback, useState } from "react";
+import { toast } from "react-hot-toast";
+
+import Avatar from "./Avatar";
+import Button from "./Button";
+import useRegisterModal from "./hooks/useRegisterModal";
+import useLoginModal from "./hooks/useLoginModal";
+import useCurrentUser from "./hooks/useCurrentUser";
+import usePosts from "./hooks/usePosts";
+import usePost from "./hooks/usePost";
 
 interface FormProps {
   placeholder: string;
@@ -20,25 +22,25 @@ const Form: React.FC<FormProps> = ({ placeholder, isComment, postId }) => {
 
   const { data: currentUser } = useCurrentUser();
   const { mutate: mutatePosts } = usePosts();
-  const { mutate: mutatePost } = usePosts(postId as string);
+  const { mutate: mutatePost } = usePost(postId as string);
 
-  const [body, setBody] = useState('');
+  const [body, setBody] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit = useCallback(async () => {
     try {
       setIsLoading(true);
 
-      const url = isComment ? `/api/comments?postId=${postId}` : '/api/posts';
+      const url = isComment ? `/api/comments?postId=${postId}` : "/api/posts";
 
       await axios.post(url, { body });
 
-      toast.success('Tweet created');
-      setBody('');
+      toast.success("Tweet created");
+      setBody("");
       mutatePosts();
       mutatePost();
     } catch (error) {
-      toast.error('Something went wrong');
+      toast.error("Something went wrong");
     } finally {
       setIsLoading(false);
     }
@@ -49,11 +51,7 @@ const Form: React.FC<FormProps> = ({ placeholder, isComment, postId }) => {
       {currentUser ? (
         <div className="flex flex-row gap-4">
           <div>
-            <Avatar
-              userId={currentUser?.id}
-              isLarge={false}
-              hasBorder={false}
-            />
+            <Avatar userId={currentUser?.id} />
           </div>
           <div className="w-full">
             <textarea
