@@ -1,12 +1,12 @@
-import React from 'react';
-import usePosts from '../hooks/usePosts';
-import PostItem from './PostItem';
+import usePosts from "../hooks/usePosts";
+import PostItem from "./PostItem";
+
 interface PostFeedProps {
   userId?: string;
 }
 
 const PostFeed: React.FC<PostFeedProps> = ({ userId }) => {
-  const { data: posts = [] } = usePosts(userId);
+  const { data: posts = [] } = usePosts(userId as string);
 
   return (
     <>

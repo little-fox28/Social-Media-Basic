@@ -1,14 +1,15 @@
-import { useRouter } from 'next/router';
-import { useCallback, useMemo } from 'react';
-import { AiFillHeart, AiOutlineHeart, AiOutlineMessage } from 'react-icons/ai';
-import { formatDistanceToNowStrict } from 'date-fns';
+import { useRouter } from "next/router";
+import { useCallback, useMemo } from "react";
+import { AiFillHeart, AiOutlineHeart, AiOutlineMessage } from "react-icons/ai";
+import { formatDistanceToNowStrict } from "date-fns";
 
-import Avatar from '../Avatar';
-import useLoginModal from '../hooks/useLoginModal';
-import useCurrentUser from '../hooks/useCurrentUser';
+import Avatar from "../Avatar";
+import useLoginModal from "../hooks/useLoginModal";
+import useCurrentUser from "../hooks/useCurrentUser";
+import useLike from "../hooks/useLike";
 interface PostItemProps {
   data: Record<string, any>;
-  userId?: string;
+  userId: string;
 }
 
 const PostItem: React.FC<PostItemProps> = ({ data = {}, userId }) => {
@@ -16,10 +17,11 @@ const PostItem: React.FC<PostItemProps> = ({ data = {}, userId }) => {
   const loginModal = useLoginModal();
 
   const { data: currentUser } = useCurrentUser();
+  const { hasLiked, toggleLike } = useLike({ postId: data.id, userId });
 
   const goToUser = useCallback(
-    (event: any) => {
-      event.stopPropagation();
+    (ev: any) => {
+      ev.stopPropagation();
       router.push(`/users/${data.user.id}`);
     },
     [router, data.user.id]
@@ -30,12 +32,20 @@ const PostItem: React.FC<PostItemProps> = ({ data = {}, userId }) => {
   }, [router, data.id]);
 
   const onLike = useCallback(
-    (event: any) => {
-      event.stopPropagation();
-      loginModal.onOpen();
+    async (ev: any) => {
+      ev.stopPropagation();
+
+      if (!currentUser) {
+        return loginModal.onOpen();
+      }
+
+      toggleLike();
     },
-    [loginModal]
+    [loginModal, currentUser, toggleLike]
   );
+
+  
+  const LikeIcon = hasLiked ? AiFillHeart : AiOutlineHeart;
 
   const createdAt = useMemo(() => {
     if (!data?.createdAt) {
@@ -64,7 +74,7 @@ const PostItem: React.FC<PostItemProps> = ({ data = {}, userId }) => {
             <p
               onClick={goToUser}
               className="
-                text-white 
+                text-white
                 font-semibold 
                 cursor-pointer 
                 hover:underline
@@ -100,7 +110,7 @@ const PostItem: React.FC<PostItemProps> = ({ data = {}, userId }) => {
                 hover:text-sky-500
             "
             >
-              <AiOutlineMessage size={28} />
+              <AiOutlineMessage size={20} />
               <p>{data.comments?.length || 0}</p>
             </div>
             <div
@@ -116,7 +126,7 @@ const PostItem: React.FC<PostItemProps> = ({ data = {}, userId }) => {
                 hover:text-red-500
             "
             >
-              <AiFillHeart size={28} />
+              <LikeIcon color={hasLiked ? "red" : ""} size={20} />
               <p>{data.likedIds.length}</p>
             </div>
           </div>
