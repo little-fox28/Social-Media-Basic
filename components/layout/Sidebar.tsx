@@ -1,31 +1,32 @@
-import React from 'react';
-import { BsBellFill, BsHouseFill } from 'react-icons/bs';
-import { FaUser } from 'react-icons/fa';
-import { BiLogOut } from 'react-icons/bi';
+import React from "react";
+import { BsBellFill, BsHouseFill } from "react-icons/bs";
+import { FaUser } from "react-icons/fa";
+import { BiLogOut } from "react-icons/bi";
 
-import useCurrentUser from '../../components/hooks/useCurrentUser';
-import SidebarItem from './SidebarItem';
-import SidebarLogo from './SidebarLogo';
-import SidebarTweetButton from './SidebarTweetButton';
-import { signOut } from 'next-auth/react';
+import useCurrentUser from "../../components/hooks/useCurrentUser";
+import SidebarItem from "./SidebarItem";
+import SidebarLogo from "./SidebarLogo";
+import SidebarTweetButton from "./SidebarTweetButton";
+import { signOut } from "next-auth/react";
 
 export default function Sidebar() {
   const { data: currentUser } = useCurrentUser();
 
   const items = [
     {
-      label: 'Home',
-      href: '/',
+      label: "Home",
+      href: "/",
       icon: BsHouseFill,
     },
     {
-      label: 'Notifications',
-      href: '/notifications',
+      label: "Notifications",
+      href: "/notifications",
       icon: BsBellFill,
       auth: true,
+      alert: currentUser?.hasNotification,
     },
     {
-      label: 'Profile',
+      label: "Profile",
       href: `/users/${currentUser?.id}`,
       icon: FaUser,
       auth: true,
@@ -45,6 +46,7 @@ export default function Sidebar() {
                 label={item.label}
                 icon={item.icon}
                 auth={item.auth}
+                alert={item.alert}
               />
             ))}
             {currentUser && (
